@@ -53,16 +53,34 @@ public class TransferPageTest {
     @Test
     public void test() {
 
-       click(transfer);
-       click(transferToCard);
-       click(cardNumberBar);
-       click(cardNumberByTransfer);
+        click(transfer);
+        click(transferToCard);
+        click(cardNumberBar);
+        click(cardNumberByTransfer);
+
+        sendMobileKeys(cardNumberByTransfer, "5243754444510208");
+        click(continueTransfer);
+
+        if (isEnabled(ExpDate)) {
+            click(ExpDate);
+            sendKeys(ExpDate, "13/29");
+
+//            if (checkedColor(continueTransfer)) {
+//                click(continueTransfer);
+//            } else {
+//                click(backBalance);
+//                click(backCardNumber);
+//            }
+
+        }
 
 
-        sendMobileKeys(cardNumberByTransfer,"5167513343864716");
-       click(continueTransfer);
+        click(balanceTransfer);
+        sendBalance(balanceTransfer, 1234.7);
 
-
+        if (isEnabled(balanceError)) {
+        }
+        click(transfer);
 
 
     }
@@ -74,14 +92,7 @@ public class TransferPageTest {
     }
 
 
-
-
-
-
-
-
-
-    public WebElement findElementById(By by){
+    public WebElement findElementById(By by) {
 
         driver.manage().timeouts().implicitlyWait(10, SECONDS);
         wait.until(ExpectedConditions.presenceOfElementLocated(by));
@@ -89,41 +100,66 @@ public class TransferPageTest {
     }
 
 
-
-    public WebElement findElement(By by){
+    public WebElement findElement(By by) {
 
         driver.manage().timeouts().implicitlyWait(10, SECONDS);
         wait.until(ExpectedConditions.presenceOfElementLocated(by));
         return driver.findElement(by);
     }
 
-    public void sendKeys(By by, String txt){
+    public void sendKeys(By by, String txt) {
 
         driver.manage().timeouts().implicitlyWait(10, SECONDS);
         findElement(by).sendKeys(txt);
     }
 
-    public void sendMobileKeys(By by, String txt){
+    public boolean isEnabled(By by) {
+
+        driver.manage().timeouts().implicitlyWait(5, SECONDS);
+        return wait.until(ExpectedConditions.presenceOfElementLocated(by)).isEnabled();
+
+    }
+
+
+    public boolean checkedColor(By by) {
+
+        driver.manage().timeouts().implicitlyWait(5, SECONDS);
+        String clickable =
+        wait.until(ExpectedConditions.presenceOfElementLocated(by)).getAttribute("clickable");
+        System.out.println(clickable);
+        return clickable.equals("true");
+
+
+    }
+
+    public void sendBalance(By by, Double balance) {
+
+        driver.manage().timeouts().implicitlyWait(10, SECONDS);
+        findElement(by).click();
+        driver.getKeyboard().pressKey(String.valueOf(balance));
+
+    }
+
+    public void sendMobileKeys(By by, String txt) {
         driver.manage().timeouts().implicitlyWait(10, SECONDS);
 
         MobileElement cardNumberE2 = (MobileElement) driver.findElement(by);
         cardNumberE2.sendKeys(txt);
 
-
-
     }
 
-    public void click(By by){
-        driver.manage().timeouts().implicitlyWait(10, SECONDS);
+    public void click(By by) {
+        driver.manage().timeouts().implicitlyWait(15, SECONDS);
         findElement(by).click();
-        driver.manage().timeouts().implicitlyWait(10, SECONDS);
+        driver.manage().timeouts().implicitlyWait(15, SECONDS);
 
     }
-    public void clear(By by){
+
+    public void clear(By by) {
         findElement(by).clear();
     }
 
-    public String getText(By by){
+    public String getText(By by) {
         return findElement(by).getText();
     }
 

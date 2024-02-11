@@ -23,6 +23,8 @@ public class TransferConstants {
 
     public static final By balanceError = By.xpath("//android.view.View[@content-desc=\"Insufficient funds. Balance 0.00 ₼\"]");
 
+    public static final By ExpDate = By.xpath("//android.widget.EditText");
+
     public static final By transferBalance = By.xpath("//android.view.View[@content-desc=\"Transfer\"]");
 
     public static  final By backBalance = By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]");
