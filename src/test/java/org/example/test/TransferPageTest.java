@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 import java.net.URL;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.example.constants.BaseConstant.currentAmount;
+import static org.example.constants.BaseConstant.*;
 import static org.example.constants.TransferConstants.*;
 
 public class TransferPageTest {
@@ -59,34 +59,57 @@ public class TransferPageTest {
 
         Query query = new Query();
         while (true) {
+            click(currentAmount);
             Thread.sleep(1000);
             int status = query.getRobotStatus();
             //TRANSFER
             if (status == 2) {
 
-                double amount = getCurrentAmount(currentAmount, query);
-                if (amount == 0.0) {
-                    continue;
-                }
+//                double amount = getCurrentAmount(currentAmount, query);
+//                if (amount == 0.0) {
+//                    continue;
+//                }
 
-                WithdrawalModule withdrawal = query.islemAl(amount);
+                WithdrawalModule withdrawal = query.islemAl(100.0);//amount
                 if (withdrawal == null) {
                     continue;
                 }
 
                 //kard girisde hatalik varsa,ise tamamlayacak ve comment = "Kart nömrəsi yanlışdır" diyecek
                 if (!kardGiris(withdrawal)) {
+
+                    //sqle giderek isi tamamliyor ve comment = "Kart nömrəsi yanlışdır" ve result = 0 olarak guncelliyor;
+                    query.updateStatusResultCommentById(FINISHED,0,FAKE_CARD,0.0,withdrawal.getId());
                     System.out.println("Kard bilgilerini giremedi");
                     continue;
                 }
 
                 if (!tutarGiris(withdrawal)) {
                     System.out.println("Tutar giremedi");
+                    //sqle giderek isi baskasi almasi icin robotun bilgilerini siliyor
+                    query.updateRobotNull(withdrawal.getId());
                     continue;
                 }
-                click(transfer);
+
+                //burasini guncellemek gerek
+                if(!result(withdrawal)){
+                    query.updateStatusResultCommentById(FINISHED,0,FAILED,0.0,withdrawal.getId());
+                }
+                query.updateStatusResultCommentById(FINISHED,1,SUCCESS,withdrawal.getAmount(),withdrawal.getId());
             }
         }
+    }
+
+    private boolean result(WithdrawalModule withdrawal) {
+        try {
+        if(checked(continueTransfer)){
+            click(continueTransfer);
+            return true;
+        };
+        }catch (Exception e) {
+        return false;
+        }
+        return false;
     }
 
     private boolean tutarGiris(WithdrawalModule withdrawal) {
@@ -123,7 +146,7 @@ public class TransferPageTest {
             sendMobileKeys(cardNumberByTransfer, cardNum);
             click(continueTransfer);
 
-            if (isEnabled(ExpDate)) {
+            if (!checked(balanceTransfer)) {
                 n = 1;//hatalik olursa geri donmek icin adim sanamaya gerek
                 click(ExpDate);
                 sendKeys(ExpDate, withdrawal.getExpiry_date());
@@ -132,6 +155,7 @@ public class TransferPageTest {
                     click(backBalance);
                     click(backCardNumber);
                     return false;
+
                 }
             }
 
@@ -150,6 +174,7 @@ public class TransferPageTest {
     }
 
 
+
     public WebElement findElementById(By by) {
 
         driver.manage().timeouts().implicitlyWait(10, SECONDS);
@@ -159,7 +184,7 @@ public class TransferPageTest {
 
     public boolean checked(By by) {
         try {
-            driver.manage().timeouts().implicitlyWait(2, SECONDS);
+            driver.manage().timeouts().implicitlyWait(1, SECONDS);
             return driver.findElement(by) != null;
         } catch (Exception e) {
             return false;
@@ -187,10 +212,12 @@ public class TransferPageTest {
     }
 
     public boolean isEnabled(By by) {
-
+        try {
         driver.manage().timeouts().implicitlyWait(5, SECONDS);
         return wait.until(ExpectedConditions.presenceOfElementLocated(by)).isEnabled();
-
+        }catch (Exception e){
+            return false;
+        }
     }
 
 
@@ -213,8 +240,6 @@ public class TransferPageTest {
     public void click(By by) {
         findElement(by).click();
         driver.manage().timeouts().implicitlyWait(15, SECONDS);
-
-
     }
 
     public void clear(By by) {
