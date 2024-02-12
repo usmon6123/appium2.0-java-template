@@ -3,6 +3,8 @@ package org.example.test;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import org.example.modul.WithdrawalModule;
+import org.example.sqlQuery.Query;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -15,6 +17,7 @@ import org.testng.annotations.Test;
 import java.net.URL;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.example.constants.BaseConstant.currentAmount;
 import static org.example.constants.TransferConstants.*;
 
 public class TransferPageTest {
@@ -22,6 +25,7 @@ public class TransferPageTest {
 
     public static AppiumDriver<WebElement> driver;
     public static WebDriverWait wait;
+    static Integer n = 0;
 
 //    TransferPage transferPage = new TransferPage(appiumDriver);
 
@@ -51,37 +55,91 @@ public class TransferPageTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws InterruptedException {
 
-        click(transfer);
-        click(transferToCard);
-        click(cardNumberBar);
-        click(cardNumberByTransfer);
+        Query query = new Query();
+        while (true) {
+            Thread.sleep(1000);
+            int status = query.getRobotStatus();
+            //TRANSFER
+            if (status == 2) {
 
-        sendMobileKeys(cardNumberByTransfer, "5243754444510208");
-        click(continueTransfer);
+                double amount = getCurrentAmount(currentAmount, query);
+                if (amount == 0.0) {
+                    continue;
+                }
 
-        if (isEnabled(ExpDate)) {
-            click(ExpDate);
-            sendKeys(ExpDate, "13/29");
+                WithdrawalModule withdrawal = query.islemAl(amount);
+                if (withdrawal == null) {
+                    continue;
+                }
 
-//            if (checkedColor(continueTransfer)) {
-//                click(continueTransfer);
-//            } else {
-//                click(backBalance);
-//                click(backCardNumber);
-//            }
+                //kard girisde hatalik varsa,ise tamamlayacak ve comment = "Kart nömrəsi yanlışdır" diyecek
+                if (!kardGiris(withdrawal)) {
+                    System.out.println("Kard bilgilerini giremedi");
+                    continue;
+                }
 
+                if (!tutarGiris(withdrawal)) {
+                    System.out.println("Tutar giremedi");
+                    continue;
+                }
+                click(transfer);
+            }
         }
+    }
 
-
-        click(balanceTransfer);
-        sendBalance(balanceTransfer, 1234.7);
-
-        if (isEnabled(balanceError)) {
+    private boolean tutarGiris(WithdrawalModule withdrawal) {
+        try {
+            click(balanceTransfer);
+            sendBalance(balanceTransfer, withdrawal.getAmount());
+            if (isEnabled(balanceError)) {
+                if (n == 1) {
+                    click(backBalance);
+                    n = 0;//hatalik olursa geri donmek icin adim sanamaya gerek
+                }
+                click(backBalance);
+                click(backCardNumber);
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        click(transfer);
+    }
 
+    private boolean kardGiris(WithdrawalModule withdrawal) {
+        try {
+            click(transfer);
+            click(transferToCard);
+            click(cardNumberBar);
+            click(cardNumberByTransfer);
+            String cardNum = withdrawal.getCard_no();
+
+            if (cardNum.length() != 16) {
+                click(backCardNumber);
+                return false;
+            }
+            sendMobileKeys(cardNumberByTransfer, cardNum);
+            click(continueTransfer);
+
+            if (isEnabled(ExpDate)) {
+                n = 1;//hatalik olursa geri donmek icin adim sanamaya gerek
+                click(ExpDate);
+                sendKeys(ExpDate, withdrawal.getExpiry_date());
+                click(continueTransfer);
+                if (!checked(balanceTransfer)) {
+                    click(backBalance);
+                    click(backCardNumber);
+                    return false;
+                }
+            }
+
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
 
     }
 
@@ -99,10 +157,25 @@ public class TransferPageTest {
         return driver.findElement(by);
     }
 
+    public boolean checked(By by) {
+        try {
+            driver.manage().timeouts().implicitlyWait(2, SECONDS);
+            return driver.findElement(by) != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Double getCurrentAmount(By by, Query query) {
+        driver.manage().timeouts().implicitlyWait(15, SECONDS);
+        String str = driver.findElement(by).getAttribute("content-desc");
+        click(currentAmount);
+        System.out.println(str.length() - 2);
+        return Double.valueOf(str.substring(0, str.length() - 2));
+    }
 
     public WebElement findElement(By by) {
-
-        driver.manage().timeouts().implicitlyWait(10, SECONDS);
+        driver.manage().timeouts().implicitlyWait(15, SECONDS);
         wait.until(ExpectedConditions.presenceOfElementLocated(by));
         return driver.findElement(by);
     }
@@ -121,17 +194,6 @@ public class TransferPageTest {
     }
 
 
-    public boolean checkedColor(By by) {
-
-        driver.manage().timeouts().implicitlyWait(5, SECONDS);
-        String clickable =
-        wait.until(ExpectedConditions.presenceOfElementLocated(by)).getAttribute("clickable");
-        System.out.println(clickable);
-        return clickable.equals("true");
-
-
-    }
-
     public void sendBalance(By by, Double balance) {
 
         driver.manage().timeouts().implicitlyWait(10, SECONDS);
@@ -149,9 +211,9 @@ public class TransferPageTest {
     }
 
     public void click(By by) {
-        driver.manage().timeouts().implicitlyWait(15, SECONDS);
         findElement(by).click();
         driver.manage().timeouts().implicitlyWait(15, SECONDS);
+
 
     }
 
@@ -162,6 +224,8 @@ public class TransferPageTest {
     public String getText(By by) {
         return findElement(by).getText();
     }
+
+
 
 
 }
