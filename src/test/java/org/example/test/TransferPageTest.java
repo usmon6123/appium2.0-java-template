@@ -47,7 +47,7 @@ public class TransferPageTest {
 
             driver = new AndroidDriver<WebElement>(new URL("http://127.0.0.1:4723/wd/hub"), cap);
 
-            wait = new WebDriverWait(driver, 5);
+            wait = new WebDriverWait(driver, 15);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -134,6 +134,10 @@ public class TransferPageTest {
 
     private boolean kardGiris(WithdrawalModule withdrawal) {
         try {
+            click(findLocatorByText("Transfer"));
+
+////android.widget.ImageView[@content-desc="Transfer to card"]
+
             click(transfer);
             click(transferToCard);
             click(cardNumberBar);
@@ -146,39 +150,39 @@ public class TransferPageTest {
             }
             sendMobileKeys(cardNumberByTransfer, cardNum);
             click(continueTransfer);
-            if (checkedByVisual(invalidCardNumber)){
+            if (checkedByVisual(invalidCardNumber)) {
                 if (checkedByVisual(continueTransfer)) {
                     click(backCardNumber);
                     return false;
                 }
             }
-            if (checkedByVisual(ExpDate)) {
-                n = 1;//hatalik olursa geri donmek icin adim sanamaya gerek
-                click(ExpDate);
-                sendKeys(ExpDate, withdrawal.getExpiry_date());
-                click(continueTransfer);
-
-                if (checkedByVisual(continueTransfer)) {
-                    click(backBalance);
-                    if (checkedByVisual(continueTransfer)) {
-                        click(backCardNumber);
-                    }
-                    return false;
-                }
-
-//                if (!checked(balanceTransfer)) {
+//            if (checkedByVisual(ExpDate)) {
+//                n = 1;//hatalik olursa geri donmek icin adim sanamaya gerek
+//                click(ExpDate);
+//                sendKeys(ExpDate, withdrawal.getExpiry_date());
+//                click(continueTransfer);
+//
+//                if (checkedByVisual(continueTransfer)) {
 //                    click(backBalance);
-//                    if(checked(continueTransfer)){
+//                    if (checkedByVisual(continueTransfer)) {
 //                        click(backCardNumber);
 //                    }
 //                    return false;
 //                }
-            }
-            if (checkedByVisual(continueTransfer)) {
-                click(backCardNumber);
-                return false;
-            }
-            if (checkedByVisual(qr)){
+
+                if (!checked(balanceTransfer)) {
+                    click(backBalance);
+                    if(checked(continueTransfer)){
+                        click(backCardNumber);
+                    }
+                    return false;
+                }
+//            }
+//            if (checkedByVisual(continueTransfer)) {
+//                click(backCardNumber);
+//                return false;
+//            }
+            if (checkedByVisual(qr)) {
                 click(backCardNumber);
                 return false;
             }
@@ -215,9 +219,9 @@ public class TransferPageTest {
     public boolean checkedByVisual(By by) {
         try {
             driver.manage().timeouts().implicitlyWait(1, SECONDS);
-            WebElement until = wait.until(ExpectedConditions.visibilityOfElementLocated(by));
-            System.out.println(until.toString() != null ? until.toString() : "null");
-            return until != null;
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+            System.out.println(element.toString() != null ? element.toString() : "null");
+            return element != null;
         } catch (Exception e) {
             return false;
         }
@@ -232,9 +236,19 @@ public class TransferPageTest {
     }
 
     public WebElement findElement(By by) {
-        driver.manage().timeouts().implicitlyWait(15, SECONDS);
+//        driver.manage().timeouts().implicitlyWait(15, SECONDS);
         wait.until(ExpectedConditions.presenceOfElementLocated(by));
         return driver.findElement(by);
+    }
+
+    //yazma alani var olan hujreler icin
+    public static By findLocatorByText(String text) {
+        return By.xpath("//android.widget.EditText[@text=\"" + text + "\"]");
+    }
+
+    //resimli buttonler icin
+    public static By findLocatorByContent(String text) {
+        return By.xpath("//android.widget.ImageView[@content-desc=\""+text+"\"]");
     }
 
     public void sendKeys(By by, String txt) {
@@ -270,8 +284,8 @@ public class TransferPageTest {
     }
 
     public void click(By by) {
+//        driver.manage().timeouts().implicitlyWait(15, SECONDS);
         findElement(by).click();
-        driver.manage().timeouts().implicitlyWait(15, SECONDS);
     }
 
     public void clear(By by) {
