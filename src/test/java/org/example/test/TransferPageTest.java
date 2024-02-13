@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
 
 import java.net.URL;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.example.constants.BaseConstant.currentAmount;
 import static org.example.constants.TransferConstants.*;
@@ -64,12 +65,12 @@ public class TransferPageTest {
             //TRANSFER
             if (status == 2) {
 
-                double amount = getCurrentAmount(currentAmount, query);
-                if (amount == 0.0) {
-                    continue;
-                }
+//                double amount = getCurrentAmount(currentAmount, query);
+//                if (amount == 0.0) {
+//                    continue;
+//                }
 
-                WithdrawalModule withdrawal = query.islemAl(amount);
+                WithdrawalModule withdrawal = query.islemAl(199.0);//amount
                 if (withdrawal == null) {
                     continue;
                 }
@@ -121,26 +122,33 @@ public class TransferPageTest {
                 return false;
             }
             sendMobileKeys(cardNumberByTransfer, cardNum);
+
+            if (checkedByVisual(invalidCardNumber)) {
+                click(backCardNumber);
+                return false;
+            }
             click(continueTransfer);
 
-            if (isEnabled(ExpDate)) {
-                n = 1;//hatalik olursa geri donmek icin adim sanamaya gerek
+            //expired date sayfasi acilsa burasina girecek
+            if (checkedByVisual(ExpDatePage)) {
                 click(ExpDate);
-                sendKeys(ExpDate, withdrawal.getExpiry_date());
+                sendMobileKeys(ExpDate, withdrawal.getExpiry_date());
                 click(continueTransfer);
-                if (!checked(balanceTransfer)) {
+                //expired date yanlissa ana sayfaya geri donecek
+                if (!checkedByVisual(balancePage)) {
                     click(backBalance);
                     click(backCardNumber);
                     return false;
                 }
             }
 
-
-            return true;
+            if (checkedByVisual(balancePage)) {
+                return true;
+            }
         } catch (Exception e) {
             return false;
         }
-
+        return false;
     }
 
     @AfterTest
@@ -170,8 +178,8 @@ public class TransferPageTest {
         driver.manage().timeouts().implicitlyWait(15, SECONDS);
         String str = driver.findElement(by).getAttribute("content-desc");
         click(currentAmount);
-        System.out.println(str.length() - 2);
-        return Double.valueOf(str.substring(0, str.length() - 2));
+        System.out.println(str.length() - 1);
+        return Double.valueOf(str.substring(0, str.length() - 1));
     }
 
     public WebElement findElement(By by) {
@@ -211,8 +219,8 @@ public class TransferPageTest {
     }
 
     public void click(By by) {
-        findElement(by).click();
-        driver.manage().timeouts().implicitlyWait(15, SECONDS);
+        wait.until(ExpectedConditions.presenceOfElementLocated(by));
+        driver.findElement(by).click();
 
 
     }
@@ -223,6 +231,17 @@ public class TransferPageTest {
 
     public String getText(By by) {
         return findElement(by).getText();
+    }
+    public boolean checkedByVisual(By by) {
+        try {
+            driver.manage().timeouts().implicitlyWait(500, MILLISECONDS);
+            WebElement element =driver.findElement(by);
+            System.out.println(element.toString() != null ? element.toString() : "null");
+            return element != null;
+        } catch (Exception e) {
+            System.out.println("ui elementi bulamadi");
+            return false;
+        }
     }
 
 
