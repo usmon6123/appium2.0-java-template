@@ -8,11 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.eclipse.jetty.http.HttpHeaderValues.PROCESSING;
-import static org.example.constants.BaseConstant.*;
+import static org.example.constants.BaseConstants.*;
 
 public class Query {
-
     public int getRobotStatus() {
         Connection connection = DatabaseConnection.getConnection();
         int result = 0;
@@ -92,6 +90,7 @@ public class Query {
             statement.executeUpdate();
 
 
+
         } catch (Exception e) {
             return null;
         } finally {
@@ -105,7 +104,6 @@ public class Query {
         }
         return withdrawal;
     }
-
     public boolean checkedBIN(String cardBIN) {
         try {
 
@@ -204,18 +202,6 @@ public class Query {
         return true;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //     public Double getCurrentAmount() {

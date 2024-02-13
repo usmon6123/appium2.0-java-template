@@ -4,7 +4,6 @@ import org.openqa.selenium.By;
 
 public class TransferConstants {
 
-
     public static final By transfer = By.xpath("//android.widget.ImageView[@content-desc=\"Transfer\"]");
 
     public static final By transferToCard = By.xpath("//android.widget.ImageView[@content-desc=\"Transfer to card\"]");

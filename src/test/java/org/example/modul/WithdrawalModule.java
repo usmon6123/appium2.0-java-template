@@ -34,6 +34,14 @@ public class WithdrawalModule {
         this.robot = robot;
     }
 
+    public String getSender_id() {
+        return sender_id;
+    }
+
+    public void setSender_id(String sender_id) {
+        this.sender_id = sender_id;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -80,14 +88,6 @@ public class WithdrawalModule {
 
     public void setRobot(String robot) {
         this.robot = robot;
-    }
-
-    public String getSender_id() {
-        return sender_id;
-    }
-
-    public void setSender_id(String sender_id) {
-        this.sender_id = sender_id;
     }
 
     @Override

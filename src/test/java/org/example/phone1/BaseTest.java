@@ -1,27 +1,32 @@
-package org.example.base;
+package org.example.phone1;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 
 import java.net.URL;
 
+import static org.example.constants.BaseConstants.PHONE1;
+import static org.example.constants.BaseConstants.TIME15;
+
 public class BaseTest {
-    public static AppiumDriver<WebElement> appiumDriver;
-    public static WebDriverWait wait ;
+    public static AppiumDriver<WebElement> driver;
+    public static WebDriverWait wait;
+
 
     @BeforeClass
-    public void setup(){
+    public void setup() {
         try {
             DesiredCapabilities cap = new DesiredCapabilities();
 
             cap.setCapability("deviceName", "Redmi 9T");
             cap.setCapability("platformName", "android");
             cap.setCapability("platformVersion", "10.0");
-            cap.setCapability("udid", "93e3d5f00920");
+            cap.setCapability("udid", PHONE1);
 
 
             cap.setCapability("appPackage", "com.m10");
@@ -30,25 +35,22 @@ public class BaseTest {
             cap.setCapability("skipUnlock", "true");
             cap.setCapability("noReset", "true");
 
-            appiumDriver = new AndroidDriver<WebElement>(new URL("http://127.0.0.1:4723/wd/hub"), cap);
+            driver = new AndroidDriver<WebElement>(new URL("http://127.0.0.1:4723/wd/hub"), cap);
 
-            wait = new WebDriverWait(appiumDriver, 5);
+            wait = new WebDriverWait(driver, TIME15);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static AppiumDriver<WebElement> getAppiumDriver() {
-        return appiumDriver;
-    }
-
-    public static void setAppiumDriver(AppiumDriver<WebElement> appiumDriver) {
-        BaseTest.appiumDriver = appiumDriver;
+    @AfterTest
+    public void tearDown() {
+//        driver.quit();
     }
 
 
-    public void  tearDown(){
-        getAppiumDriver().quit();
-    }
 }
+
+
+
 
