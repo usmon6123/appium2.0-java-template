@@ -1,19 +1,24 @@
 package org.example.phone3;
 
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.time.Duration;
+
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.example.constants.BaseConstants.TIME500;
-import static org.example.constants.BaseConstants.my_page;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.example.constants.BaseConstants.*;
 
 public class Helper extends BaseTest {
 
 
     public void click(By by) {
-//        driver.manage().timeouts().implicitlyWait(TIME15, SECONDS);
+        driver.manage().timeouts().implicitlyWait(TIME6, SECONDS);
         wait.until(ExpectedConditions.presenceOfElementLocated(by));
         driver.findElement(by).click();
     }
@@ -21,7 +26,7 @@ public class Helper extends BaseTest {
 
     public boolean checkedByVisual(By by) {
         try {
-            driver.manage().timeouts().implicitlyWait(TIME500, MILLISECONDS);
+            driver.manage().timeouts().implicitlyWait(TIME6, SECONDS);
             WebElement element = driver.findElement(by);
             System.out.println(element.toString() != null ? element.toString() : "null");
             return element != null;
@@ -77,5 +82,42 @@ public class Helper extends BaseTest {
         driver.navigate().back();
     }
 
+    public static void swipe() {
+        TouchAction swipeAction = new TouchAction(driver);
+        swipeAction
+                .press(PointOption.point(557, 410))
+                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(400)))
+                .moveTo(PointOption.point(557, 570))
+                .release()
+                .perform();
+
+
+    }
+
+
+    //final var finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+    //var start = new Point(557, 410);
+    //var end = new Point (557, 570);
+    //var swipe = new Sequence(finger, 1);
+    //swipe.addAction(finger.createPointerMove(Duration.ofMillis(0),
+    //    PointerInput.Origin.viewport(), start.getX(), start.getY()));
+    //swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    //swipe.addAction(finger.createPointerMove(Duration.ofMillis(1000),
+    //    PointerInput.Origin.viewport(), end.getX(), end.getY()));
+    //swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    //driver.perform(Arrays.asList(swipe));
+
+
+    //final var finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+    //var start = new Point(534, 427);
+    //var end = new Point (543, 548);
+    //var swipe = new Sequence(finger, 1);
+    //swipe.addAction(finger.createPointerMove(Duration.ofMillis(0),
+    //    PointerInput.Origin.viewport(), start.getX(), start.getY()));
+    //swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    //swipe.addAction(finger.createPointerMove(Duration.ofMillis(1000),
+    //    PointerInput.Origin.viewport(), end.getX(), end.getY()));
+    //swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    //driver.perform(Arrays.asList(swipe));
 
 }

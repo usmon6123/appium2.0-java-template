@@ -17,11 +17,11 @@ public class BaseConstants {
 
 
     public static final String PHONE1 = "93e3d5f00920";
-    public static final Integer TIME15 = 15;
+    public static final Integer TIME6 = 2;
     public static final Integer TIME60 = 60;
-    public static final Integer TIME500 =200;
+    public static final Integer TIME500 =500;
     public static final Integer LIMIT_STATUS = 7;
-    public static Integer statusE = 1;//default 1 olmasinin sebebbi methodlar success tamamlanirsa  status = 0 gonderejek;
+    public static Integer statusE = 0;// 1 olursa error     0 olursa success;
     public static boolean successM = true;//default true ;
 
 
@@ -31,6 +31,10 @@ public class BaseConstants {
 
     public static By findLocatorBySetText(String text) {
         return By.xpath("//android.widget.EditText[@text=\"" + text + "\"]");
+    }
+
+    public static By findByViewView(String text) {
+        return By.xpath("//android.view.View[contains(@content-desc,\"" + text + "\")]");
     }
 
     //resimli buttonler icin

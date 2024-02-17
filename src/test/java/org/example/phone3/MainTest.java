@@ -21,9 +21,7 @@ public class MainTest extends BaseTest {
 
     @Test
     public void test() throws InterruptedException {
-        Thread.sleep(5000);
-        helper.click(defaultClickInHomePage);
-        Thread.sleep(500);
+        Thread.sleep(15000);
         while (true) {
             Thread.sleep(3000);
 
@@ -31,17 +29,21 @@ public class MainTest extends BaseTest {
             int robotRun = query.getRobotStatus();
             //TRANSFER
             if (robotRun == 2) {//robot run = 2 ise sadece transfer icin calisir robot
-
                 while (true) {
                     try {
-                        getCurrentAmount();
+                        currentAmount = getCurrentAmount();
                         System.out.println("current amount: " + currentAmount);
-                        WithdrawalModule withdrawal = query.islemAl(200.0);//currentAmount
+//                        Helper.swipe();
+                        WithdrawalModule withdrawal = query.islemAl(currentAmount);//currentAmount
                         if (withdrawal == null) {
                             break;
                         }
+
                         transfer.transferMain(withdrawal);//islemi sonlandirsa 100 sonlandiramassa 1
-                        break;
+                        if (statusE == 1) {
+                            statusE = 0;
+                            helper.goHome();
+                        } else break;
                     } catch (Exception e) {
                         helper.goHome();//ana sayfaya geri dondurecek ordan yeniden transferi baslar
                     }
@@ -51,11 +53,12 @@ public class MainTest extends BaseTest {
     }
 
 
-    public void getCurrentAmount() {
+    public static Double getCurrentAmount() {
+        double currentAmount;
         Connection connection = DatabaseConnection.getConnection();
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
         String amountStr = driver.findElement(amount).getAttribute("content-desc");
-        currentAmount = Double.valueOf(amountStr.substring(0, amountStr.length() - 1));
+        currentAmount = Double.parseDouble(amountStr.substring(0, amountStr.length() - 1));
         if (connection != null) {
             try {
                 connection.close();
@@ -63,5 +66,6 @@ public class MainTest extends BaseTest {
                 throw new RuntimeException(e);
             }
         }
+        return currentAmount;
     }
 }

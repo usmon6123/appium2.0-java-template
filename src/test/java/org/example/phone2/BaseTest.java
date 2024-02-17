@@ -11,7 +11,7 @@ import org.testng.annotations.BeforeClass;
 import java.net.URL;
 
 import static org.example.constants.BaseConstants.PHONE1;
-import static org.example.constants.BaseConstants.TIME15;
+import static org.example.constants.BaseConstants.TIME6;
 
 public class BaseTest {
     public static AppiumDriver<WebElement> driver;
@@ -37,7 +37,7 @@ public class BaseTest {
 
             driver = new AndroidDriver<WebElement>(new URL("http://127.0.0.1:4723/wd/hub"), cap);
 
-            wait = new WebDriverWait(driver, TIME15);
+            wait = new WebDriverWait(driver, TIME6);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
