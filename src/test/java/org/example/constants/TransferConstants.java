@@ -18,7 +18,7 @@ public class TransferConstants {
 
     public static final By balanceTransfer = By.xpath("//android.widget.EditText[@text=\"0 ₼\"]");
 
-    public static final By balanceError = By.xpath("//android.view.View[@content-desc=\"Insufficient funds. Balance 0.00 ₼\"]");
+    public static final By balanceError = By.xpath("//android.view.View[contains(@content-desc,\"Insufficient funds. Balance\")]");
 
     public static final By balancePage = By.xpath("//android.view.View[starts-with(@content-desc, \"Balance:\")]");
 
@@ -27,9 +27,12 @@ public class TransferConstants {
     public static final By ExpDatePage = By.xpath("//android.view.View[@content-desc=\"To transfer to the card, enter the validity period of this card\"]");
 
 
-    public static final By transferBalance = By.xpath("//android.view.View[@content-desc=\"Transfer\"]");
+    public static final By transferBalance1 = By.xpath("//android.view.View[contains(@content-desc,\"Transfer\")]");
+    public static final By transferBalance2 = By.xpath("//android.view.View[contains(@content-desc,\"₼\")]");
 
     public static final By backBalance = By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView[1]");
 
     public static final By backCardNumber = By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView");
+    public static final By backToHomeResult = By.xpath("//android.view.View[@content-desc=\"Back to home\"]");
+    public static final By transferInProgress = By.xpath("//android.view.View[contains(@content-desc,\"Transfer in progress\")]");
 }

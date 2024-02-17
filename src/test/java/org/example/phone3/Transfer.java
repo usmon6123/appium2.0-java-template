@@ -1,4 +1,4 @@
-package org.example.phone1;
+package org.example.phone3;
 
 import org.example.modul.WithdrawalModule;
 import org.example.sqlQuery.Query;
@@ -9,53 +9,51 @@ import static org.example.constants.TransferConstants.*;
 public class Transfer extends Helper {
     private static final Query query = new Query();
 
-    public int transferMain(WithdrawalModule withdrawal) throws InterruptedException {
+    public void transferMain(WithdrawalModule withdrawal) throws InterruptedException {
 
         //kard girisde hatalik varsa,ise tamamlayacak ve comment = "Kart nömrəsi yanlışdır" diyecek
         if (!kardGiris(withdrawal)) {
             //sqle giderek isi tamamliyor ve comment = "Kart nömrəsi yanlışdır" ve result = 0 olarak guncelliyor;
             query.updateStatusResultCommentById(FINISHED, 0, FAKE_CARD, 0.0, withdrawal.getId());
-            System.out.println("Kard bilgilerini giremedi");
-            return 1;
+            System.out.println("Kard bilgileri yanlis");
+            return;
         }
 
         if (!tutarGiris(withdrawal)) {
             System.out.println("Tutar giremedi");
             //sqle giderek isi baskasi almasi icin robotun bilgilerini siliyor
             query.updateRobotNull(withdrawal.getId());
-            return 1;
+            System.out.println(withdrawal.getId());
+            goHome();
+            return;
         }
 
-//                //burasini guncellemek gerek
-//                if (!result(withdrawal)) {
-//                    query.updateStatusResultCommentById(FINISHED, 0, FAILED, 0.0, withdrawal.getId());
-//                }
-//                query.updateStatusResultCommentById(FINISHED, 1, SUCCESS, withdrawal.getAmount(), withdrawal.getId());
-        return 0;
+        //burasini guncellemek gerek
+        if (!result(withdrawal)) {
+            query.updateStatusResultCommentById(FINISHED, 0, FAILED, 0.0, withdrawal.getId());
+        }
+        query.updateStatusResultCommentById(FINISHED, 1, SUCCESS, withdrawal.getAmount(), withdrawal.getId());
+        return;
     }
-
 
 
     private boolean kardGiris(WithdrawalModule withdrawal) {
 
         try {
             click(transfer);
-            Thread.sleep(30000);
             click(transferToCard);
-            Thread.sleep(30000);
             click(cardNumberBar);
-            Thread.sleep(30000);
             click(cardNumberByTransfer);
             String cardNum = withdrawal.getCard_no();
 
             if (cardNum.length() != 16) {
-                click(backCardNumber);
+                goHome();
                 return false;
             }
             sendMobileKeys(cardNumberByTransfer, cardNum);
 
             if (checkedByVisual(invalidCardNumber)) {
-                click(backCardNumber);
+                goHome();
                 return false;
             }
             click(continueTransfer);
@@ -67,8 +65,7 @@ public class Transfer extends Helper {
                 click(continueTransfer);
                 //expired date yanlissa ana sayfaya geri donecek
                 if (!checkedByVisual(balancePage)) {
-                    click(backBalance);
-                    click(backCardNumber);
+                    goHome();
                     return false;
                 }
             }
@@ -91,9 +88,10 @@ public class Transfer extends Helper {
 
                 //bakiye yetersisse ana sayfaya geri donecek
                 if (checkedByVisual(balanceError)) {
-                    click(backBalance);
-                    if (checkedByVisual(ExpDatePage)) click(backBalance);
-                    click(backCardNumber);
+                    goHome();
+//                    click(backBalance);
+//                    if (checkedByVisual(ExpDatePage)) click(backBalance);
+//                    click(backCardNumber);
                     return false;
                 }
                 return true;
@@ -107,12 +105,18 @@ public class Transfer extends Helper {
 
     private boolean result(WithdrawalModule withdrawal) {
         try {
+            if (checkedByVisual(transferBalance1) && checkedByVisual(transferBalance2)) {
+                click(transfer);
+                if (checkedByVisual(backToHomeResult) && checkedByVisual(transferInProgress)){
+                    click(backToHomeResult);
+                return true;
+                }
+            }
 
-        click(continueTransfer);
-
-        return  true;
-        }catch (Exception e) {return false;}
-
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
     }
 
 

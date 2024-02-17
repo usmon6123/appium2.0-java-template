@@ -202,32 +202,3 @@ public class Query {
         return true;
     }
 }
-
-
-//     public Double getCurrentAmount() {
-//        Connection connection = DatabaseConnection.getConnection();
-//        double result = 0.0;
-//        try {
-//            String sql = "";
-//            PreparedStatement stmt = connection.prepareStatement(sql);
-//            ResultSet resultSet = stmt.executeQuery();
-//
-//            while (resultSet.next()) {
-//                result = resultSet.getInt(3);
-//            }
-//
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            return 0.0;
-//        }finally {
-//            if (connection != null) {
-//                try {
-//                    connection.close();
-//                } catch (SQLException e) {
-//                    System.err.println("Error closing connection: " + e.getMessage());
-//                }
-//            }
-//        }
-//        return result;
-//    }
-

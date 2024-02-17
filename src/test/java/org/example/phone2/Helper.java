@@ -1,14 +1,13 @@
-package org.example.phone1;
+package org.example.phone2;
 
 import io.appium.java_client.MobileElement;
+import org.example.phone1.BaseTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.example.constants.BaseConstants.TIME500;
-import static org.example.constants.BaseConstants.my_page;
-import static org.example.phone1.MainTest.currentWebElement;
 
 public class Helper extends BaseTest {
 
@@ -33,12 +32,8 @@ public class Helper extends BaseTest {
     }
 
     public WebElement findElement(By by){
-        try {
-            wait.until(ExpectedConditions.presenceOfElementLocated(by));
-            return driver.findElement(by);
-        }catch(Exception e){
-            return null;
-        }
+        wait.until(ExpectedConditions.presenceOfElementLocated(by));
+        return driver.findElement(by);
     }
 
     public void sendMobileKeys(By by, String txt) {
@@ -51,34 +46,5 @@ public class Helper extends BaseTest {
         driver.getKeyboard().pressKey(text);
 
     }
-
-    public void goHome() {
-        int count = 0;
-        while (count < 10) {
-            boolean onHomePage = isElementDisplayed(my_page);
-            if (!onHomePage) {
-                // Ana sayfaya geri dönme işlemi
-                driver.navigate().back();
-                System.out.println("Ana sayfaya geri dönmek uzere");
-                count++;
-            } else {
-                System.out.println("Ana sayfaya geri dondu");
-                count = 12;//sikldan cikmak icin 10dan buyuk san yazmak gerek
-            }
-        }
-    }
-
-    public static boolean isElementDisplayed(By by) {
-        try {
-            return driver.findElement(by).isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-    public static void bacKOne(By by) {
-        driver.navigate().back();
-    }
-
-
 
 }
