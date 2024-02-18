@@ -85,7 +85,7 @@ public class Query {
             //modul aldikdan sonra hemen robot statusini "processing" ederek sql kayd ediyor
             String str3 = "UPDATE mrogo.withdrawals SET robot_status = ? WHERE (id = ?)";
             PreparedStatement statement = connection.prepareStatement(str3);
-            statement.setString(1, PROCESSING);
+            statement.setString(1, processing);
             statement.setDouble(2, withdrawal.getId());
             statement.executeUpdate();
 

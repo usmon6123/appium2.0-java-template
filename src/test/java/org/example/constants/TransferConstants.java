@@ -35,4 +35,17 @@ public class TransferConstants {
     public static final By backCardNumber = By.xpath("//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.ImageView");
     public static final By backToHomeResult = By.xpath("//android.view.View[@content-desc=\"Back to home\"]");
     public static final By transferInProgress = By.xpath("//android.view.View[contains(@content-desc,\"Transfer in progress\")]");
+
+    public static final String operationErrorMessage = "Operation error";
+    public static final String transferToCardMessage = "Transfer to card";
+    public static  String controlTransferMessage (String cardNum, double amount){
+        return  "m10 tarihini kantro'l edin transfer onaylandiyse <yes> \n onaylanmadiysa <no> tiklayin \n" + "card = "+ cardNum + " \n amount = " + amount;
+    }
+
+    //rhistory sayfasindan bilgileri almak icin
+    public static By historyListPath(String cardNumber, String amount) {
+        return By.xpath("//android.widget.ImageView[contains(@content-desc,\"" + cardNumber.substring(0, 4) + "\") and contains(@content-desc,\"" + cardNumber.substring(cardNumber.length() - 4) + "\") and contains(@content-desc,\"" + amount + "\") ]");
+    }
+
+
 }

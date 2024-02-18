@@ -66,7 +66,7 @@ public class WithdrawalModule {
         this.amount = amount;
     }
 
-    public String getCard_no() {
+    public String getCardNumber() {
         return card_no;
     }
 

@@ -1,9 +1,10 @@
-package org.example.phone3;
+package org.example.phone4;
 
 import org.example.modul.WithdrawalModule;
 import org.example.sqlQuery.Query;
 
 import static org.example.constants.BaseConstants.*;
+import static org.example.constants.SwingConstants.*;
 import static org.example.constants.TransferConstants.*;
 import static org.example.phone3.MainTest.currentAmount;
 import static org.example.phone3.MainTest.getCurrentAmount;
@@ -16,7 +17,7 @@ public class Transfer extends Helper {
         //kard girisde hatalik varsa,ise tamamlayacak ve comment = "Kart nömrəsi yanlışdır" diyecek
         if (!kardGiris(withdrawal)) {
             //sqle giderek isi tamamliyor ve comment = "Kart nömrəsi yanlışdır" ve result = 0 olarak guncelliyor;
-            query.updateStatusResultCommentById(finished, 0, FAKE_CARD, 0.0, withdrawal.getId());
+            query.updateStatusResultCommentById(finished, 0, fake_card, 0.0, withdrawal.getId());
             System.out.println("Kard bilgileri yanlis");
             statusE = 0;
             return;
@@ -26,35 +27,38 @@ public class Transfer extends Helper {
             System.out.println("Tutar giremedi");
             //sqle giderek isi baskasi almasi icin robotun bilgilerini siliyor
             query.updateRobotNull(withdrawal.getId());
-            System.out.println(withdrawal.getId());
+            updatePopUp(goHome,homePage);
             goHome();
             return;
         }
 
         //burasini guncellemek gerek
         if (!result(withdrawal)) {
-            query.updateStatusResultCommentById(finished, 0, FAILED, 0.0, withdrawal.getId());
-        } else query.updateStatusResultCommentById(finished, 1, SUCCESS, withdrawal.getAmount(), withdrawal.getId());
+            query.updateStatusResultCommentById(finished, 0, failed, 0.0, withdrawal.getId());
+        } else query.updateStatusResultCommentById(finished, 1, success, withdrawal.getAmount(), withdrawal.getId());
         return;
     }
 
 
     private boolean kardGiris(WithdrawalModule withdrawal) {
 
-
+        updatePopUp(writeCard,cardNumPage);
         click(transfer);
+        updatePopUp(writeCard,cardNumPage);
         click(transferToCard);
         click(cardNumberBar);
         click(cardNumberByTransfer);
         String cardNum = withdrawal.getCardNumber();
 
         if (cardNum.length() != 16) {
+            updatePopUp(goHome,homePage);
             goHome();
             return false;
         }
         sendMobileKeys(cardNumberByTransfer, cardNum);
 
         if (checkedByVisual(invalidCardNumber)) {
+            updatePopUp(goHome,homePage);
             goHome();
             return false;
         }
@@ -62,11 +66,13 @@ public class Transfer extends Helper {
 
         //expired date sayfasi acilsa burasina girecek
         if (checkedByVisual(ExpDatePage)) {
+            updatePopUp(writeCard,cardExpDatePage);
             click(ExpDate);
             sendMobileKeys(ExpDate, withdrawal.getExpiry_date());
             click(continueTransfer);
             //expired date yanlissa ana sayfaya geri donecek
             if (!checkedByVisual(balancePage)) {
+                updatePopUp(goHome,homePage);
                 goHome();
                 return false;
             }
@@ -84,6 +90,7 @@ public class Transfer extends Helper {
 
                 //bakiye yetersisse ana sayfaya geri donecek
                 if (checkedByVisual(balanceError)) {
+                    updatePopUp(goHome,homePage);
                     goHome();
                     return false;
                 }
@@ -97,6 +104,7 @@ public class Transfer extends Helper {
     }
 
     private boolean result(WithdrawalModule withdrawal) {
+        updatePopUp(balanceControl, homePage);
         try {
             int controlStatus = 2;
             //transfer tusunu bulursa direk tiklayacak
