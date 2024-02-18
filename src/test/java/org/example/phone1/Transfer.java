@@ -14,7 +14,7 @@ public class Transfer extends Helper {
         //kard girisde hatalik varsa,ise tamamlayacak ve comment = "Kart nömrəsi yanlışdır" diyecek
         if (!kardGiris(withdrawal)) {
             //sqle giderek isi tamamliyor ve comment = "Kart nömrəsi yanlışdır" ve result = 0 olarak guncelliyor;
-            query.updateStatusResultCommentById(finished, 0, FAKE_CARD, 0.0, withdrawal.getId());
+            query.updateStatusResultCommentById(finished, 0, fake_card, 0.0, withdrawal.getId());
             System.out.println("Kard bilgilerini giremedi");
             return 1;
         }

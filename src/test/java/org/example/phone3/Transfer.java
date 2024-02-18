@@ -16,7 +16,7 @@ public class Transfer extends Helper {
         //kard girisde hatalik varsa,ise tamamlayacak ve comment = "Kart nömrəsi yanlışdır" diyecek
         if (!kardGiris(withdrawal)) {
             //sqle giderek isi tamamliyor ve comment = "Kart nömrəsi yanlışdır" ve result = 0 olarak guncelliyor;
-            query.updateStatusResultCommentById(finished, 0, FAKE_CARD, 0.0, withdrawal.getId());
+            query.updateStatusResultCommentById(finished, 0, fake_card, 0.0, withdrawal.getId());
             System.out.println("Kard bilgileri yanlis");
             statusE = 0;
             return;
@@ -33,8 +33,8 @@ public class Transfer extends Helper {
 
         //burasini guncellemek gerek
         if (!result(withdrawal)) {
-            query.updateStatusResultCommentById(finished, 0, FAILED, 0.0, withdrawal.getId());
-        } else query.updateStatusResultCommentById(finished, 1, SUCCESS, withdrawal.getAmount(), withdrawal.getId());
+            query.updateStatusResultCommentById(finished, 0, failed, 0.0, withdrawal.getId());
+        } else query.updateStatusResultCommentById(finished, 1, success, withdrawal.getAmount(), withdrawal.getId());
         return;
     }
 
